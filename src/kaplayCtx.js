@@ -9,6 +9,17 @@ const k = kaplay({
     font: 'happy',
     global: false,
     touchToMouse: true,
+    buttons: {
+        jump: {
+            keyboard: ["space", "up", "w"],
+        },
+        left: {
+            keyboard: ["left", "a"],
+        },
+        right: {
+            keyboard: ["right", "d"],
+        }
+    },
     debug: true,
     pixelDensity: window.devicePixelRatio,
     background: [141, 183, 255],

@@ -1,5 +1,5 @@
 import k from "./kaplayCtx.js";
-import { loadAssets, createUIButtons, gameInit, gameOver, winnerOverlay, specialSegmentInit, specialSegment } from "./utilities.js";
+import { loadAssets, createUIButtons, gameInit, gameOver, winnerOverlay } from "./utilities.js";
 
 export default function App() {
     const SPEED = 480; // speed of kat
@@ -46,12 +46,6 @@ export default function App() {
             "====================="
         ]
     ];
-    // for mobile touch event inputs
-    const input = {
-        left: false,
-        right: false,
-        jump: false,
-    };
 
     let isTutorialHasBeenShown = false; // for displaying tutorial UI
 
@@ -96,7 +90,7 @@ export default function App() {
             // display text for controls in the game
             bgGameControlText.add([
                 k.text(`
-                    Press Space/W/Arrow Up to jump
+                    Press Space/W/Arrow Up/Jump to jump
                     Press Arrow Right, D to move forward
                     Press Arrow Left, A to move backward
                     
@@ -193,7 +187,7 @@ export default function App() {
         const portal = level.get("portal")[0];
 
         // if bubby using her phone or iPad
-        createUIButtons(input);
+        createUIButtons(kat);
 
         // movements (for keyboard, mouse, gamepad)
         k.onKeyPress(["space", "up", "w"], () => {

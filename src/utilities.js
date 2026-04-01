@@ -222,15 +222,8 @@ export function specialSegment() {
         // get the player obj from level
         const kat = level.get("kat")[0];
 
-        // for mobile touch event inputs
-        const input = {
-            left: false,
-            right: false,
-            jump: false,
-        };
-
         // if bubby using her phone or iPad
-        createUIButtons(input);
+        createUIButtons(kat);
 
         // movements (for keyboard, mouse, gamepad)
         k.onKeyPress(["space", "up", "w"], () => {
@@ -283,8 +276,10 @@ export function specialSegment() {
     });
 }
 
-export function createUIButtons(input) {
+export function createUIButtons(katObj) {
     if (!isMobileDevice()) return null;
+
+    const SPEED = 480; // speed of the kat
 
     const height = k.height(); // height of the game
     const width = k.width(); // width of the game
@@ -293,8 +288,8 @@ export function createUIButtons(input) {
 
     // LEFT BUTTON
     const leftButton = k.add([
-        k.circle(20),
-        k.pos(k.center.x, 20),
+        k.circle(38),
+        k.pos(200, 600),
         k.color(0, 0, 0),
         k.opacity(0.5),
         k.area(),
@@ -307,16 +302,19 @@ export function createUIButtons(input) {
     leftButton.add([
         k.sprite("arrow"),
         k.anchor("center"),
+        k.rotate(180),
     ]);
 
     // left button touch events based on input
-    leftButton.onTouchStart(() => input.left = true);
-    leftButton.onTouchEnd(() => input.left = false);
+    leftButton.onClick(() => {
+        k.pressButton("left");
+        katObj.move(-SPEED, 0);
+    });
 
     // RIGHT BUTTON
     const rightButton = k.add([
         k.circle(38),
-        k.pos(200, 600),
+        k.pos(300, 600),
         k.color(0, 0, 0),
         k.opacity(0.5),
         k.area(),
@@ -332,13 +330,15 @@ export function createUIButtons(input) {
     ]);
 
     // right button touch events based on input
-    rightButton.onTouchStart(() => input.left = true);
-    rightButton.onTouchEnd(() => input.left = false);
+    rightButton.onClick(() => {
+        k.pressButton("right");
+        katObj.move(SPEED, 0);
+    });
 
     // JUMP BUTTON
     const jumpButton = k.add([
         k.rect(120, 60, { radius: 8 }),
-        k.pos(200, 600),
+        k.pos(1200, 600),
         k.color(0, 0, 0),
         k.opacity(0.5),
         k.area(),
@@ -355,8 +355,10 @@ export function createUIButtons(input) {
     ]);
 
     // jump button touch events based on input
-    jumpButton.onTouchStart(() => input.jump = true);
-    jumpButton.onTouchEnd(() => input.jump = false);
+    jumpButton.onClick(() => {
+        k.pressButton("jump");
+        katObj.jump();
+    });
 
     // adding UI buttons in an object to return
     controls.leftBtn = leftButton;
