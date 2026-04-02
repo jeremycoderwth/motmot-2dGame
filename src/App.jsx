@@ -6,7 +6,7 @@ export default function App() {
     // 10 levels for now
     const LEVELS = [
         [
-            "@    $ $ * ^     $  >",
+            "@  ^ $ $ * ^     $  >",
             "====================="
         ],
         [
@@ -91,8 +91,8 @@ export default function App() {
             bgGameControlText.add([
                 k.text(`
                     Press Space/W/Arrow Up/Jump to jump
-                    Press Arrow Right, D to move forward
-                    Press Arrow Left, A to move backward
+                    Press Arrow Right, D to move right
+                    Press Arrow Left, A to move left
                     
                     [Press enter or tap this to start]
                 `, { size: 24 }),
@@ -314,6 +314,11 @@ export default function App() {
         kat.onCollide("portal", () => {
             if (portal && portal.opacity === 1) {
                 if (levelIdx < LEVELS.length - 1) {
+                    // start with the game scene with the initial values
+                    k.releaseButton("left");
+                    k.releaseButton("right");
+                    k.releaseButton("jump");
+
                     k.play("bean_voice");
                     k.go("game", {
                         levelIdx: levelIdx + 1,

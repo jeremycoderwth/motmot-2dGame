@@ -52,7 +52,7 @@ export function gameInit() {
 export function gameOver(restart) {
     k.scene("lose", () => {
         k.add([
-            k.text("Aww baby, you lose :( please try again po"),
+            k.text("You lose, bebe. Please try again po"),
             k.pos(220, k.center().y),
         ]);
 
