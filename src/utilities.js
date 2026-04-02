@@ -39,6 +39,10 @@ export function loadAssets() {
 
 export function gameInit() {
     // start with the game scene with the initial values
+    k.releaseButton("left");
+    k.releaseButton("right");
+    k.releaseButton("jump");
+
     k.go("game", {
         levelIdx: 0,
         score: 0,
@@ -279,93 +283,99 @@ export function specialSegment() {
 export function createUIButtons(katObj) {
     if (!isMobileDevice()) return null;
 
-    const SPEED = 480; // speed of the kat
+    const SPEED = 480;
+    // Map to link Touch ID -> Action Name
+    const activeTouches = new Map();
 
-    const height = k.height(); // height of the game
-    const width = k.width(); // width of the game
-
-    const controls = {};
-
-    // LEFT BUTTON
-    const leftButton = k.add([
+    // 1. Setup Buttons
+    const leftBtn = k.add([
         k.circle(38),
-        k.pos(200, 600),
+        k.pos(150, k.height() - 100),
         k.color(0, 0, 0),
         k.opacity(0.5),
         k.area(),
         k.fixed(),
-        k.z(5),
+        k.z(10),
         k.anchor("center"),
-        "touch-control"
+        "mobile-btn",
+        { action: "left" }
     ]);
 
-    leftButton.add([
-        k.sprite("arrow"),
-        k.anchor("center"),
-        k.rotate(180),
-    ]);
-
-    // left button touch events based on input
-    leftButton.onClick(() => {
-        k.pressButton("left");
-        katObj.move(-SPEED, 0);
-    });
-
-    // RIGHT BUTTON
-    const rightButton = k.add([
+    const rightBtn = k.add([
         k.circle(38),
-        k.pos(300, 600),
+        k.pos(280, k.height() - 100),
         k.color(0, 0, 0),
         k.opacity(0.5),
         k.area(),
         k.fixed(),
-        k.z(5),
+        k.z(10),
         k.anchor("center"),
-        "touch-control-right"
+        "mobile-btn",
+        { action: "right" }
     ]);
 
-    rightButton.add([
-        k.sprite("arrow"),
-        k.anchor("center"),
-    ]);
-
-    // right button touch events based on input
-    rightButton.onClick(() => {
-        k.pressButton("right");
-        katObj.move(SPEED, 0);
-    });
-
-    // JUMP BUTTON
-    const jumpButton = k.add([
-        k.rect(120, 60, { radius: 8 }),
-        k.pos(1200, 600),
+    const jumpBtn = k.add([
+        k.rect(140, 70, { radius: 10 }),
+        k.pos(k.width() - 150, k.height() - 100),
         k.color(0, 0, 0),
         k.opacity(0.5),
         k.area(),
         k.fixed(),
-        k.z(5),
+        k.z(10),
         k.anchor("center"),
-        "touch-control-jump"
+        "mobile-btn",
+        { action: "jump" }
     ]);
 
-    jumpButton.add([
-        k.text("JUMP", { font: "happy", size: 24 }),
-        k.anchor("center"),
-        k.color(255, 255, 255),
-    ]);
+    // 2. Visuals
+    leftBtn.add([k.sprite("arrow"), k.anchor("center"), k.rotate(180)]);
+    rightBtn.add([k.sprite("arrow"), k.anchor("center")]);
+    jumpBtn.add([k.text("JUMP", { size: 24 }), k.anchor("center")]);
 
-    // jump button touch events based on input
-    jumpButton.onClick(() => {
-        k.pressButton("jump");
-        katObj.jump();
+    // 3. Robust Touch Events
+    k.onTouchStart((pos, t) => {
+        // We find which button was hit at the START of the touch
+        const btn = k.get("mobile-btn").find((b) => b.hasPoint(pos));
+        if (btn) {
+            activeTouches.set(t.id, btn.action);
+            k.pressButton(btn.action);
+            btn.opacity = 0.8;
+        }
     });
 
-    // adding UI buttons in an object to return
-    controls.leftBtn = leftButton;
-    controls.rightBtn = rightButton;
-    controls.jumpBtn = jumpButton;
+    k.onTouchEnd((pos, t) => {
+        // IMPORTANT: We do NOT check hasPoint(pos) here.
+        // We just check if this specific touch ID was tied to an action.
+        const action = activeTouches.get(t.id);
+        if (action) {
+            k.releaseButton(action);
+            activeTouches.delete(t.id);
 
-    return controls;
+            // Reset visual opacity
+            k.get("mobile-btn").forEach(b => {
+                if (b.action === action) b.opacity = 0.5;
+            });
+        }
+    });
+
+    // 4. Clean Movement (Inside onUpdate to prevent listener stacking)
+    katObj.onUpdate(() => {
+        if (k.isButtonDown("left")) {
+            katObj.move(-SPEED, 0);
+        }
+        if (k.isButtonDown("right")) {
+            katObj.move(SPEED, 0);
+        }
+    });
+
+    // Jump logic using virtual button
+    k.onButtonPress("jump", () => {
+        if (katObj.isGrounded()) {
+            katObj.jump();
+        }
+    });
+
+    return { leftBtn, rightBtn, jumpBtn };
 }
 
 export function isMobileDevice() {
