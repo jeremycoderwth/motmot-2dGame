@@ -19,6 +19,7 @@ export function loadAssets() {
     k.loadCrew("sprite", "zombean");
     k.loadCrew("sprite", "star");
     k.loadCrew("sprite", "moon");
+    k.loadCrew("sprite", "flowy");
 
     // font
     k.loadCrew("font", "happy");
@@ -456,7 +457,7 @@ export function popupMessageHeart(message = "Happy Monthsary!") {
     });
 }
 
-export function popupMessageStar(message = "Happy Monthsary!") {
+export function popupMessageStar(message = "Happy 20th Monthsary!") {
     // overlay for message
     const msgOverlay = k.add([
         k.rect(1000, 650, { radius: 8 }),
@@ -528,7 +529,7 @@ export function popupMessageStar(message = "Happy Monthsary!") {
     });
 }
 
-export function popupMessageMoon(message = "Happy Monthsary!") {
+export function popupMessageMoon(message = "Happy Motmot, my loveyyyy!") {
     // overlay for message
     const msgOverlay = k.add([
         k.rect(1000, 650, { radius: 8 }),
@@ -597,6 +598,78 @@ export function popupMessageMoon(message = "Happy Monthsary!") {
         k.destroy(bigMoon);
         k.destroy(smallMoon);
         k.destroy(mediumMoon);
+    });
+}
+
+export function popupMessageFire(message = "I love you, bubbab") {
+    // overlay for message
+    const msgOverlay = k.add([
+        k.rect(1000, 650, { radius: 8 }),
+        k.color(240, 250, 245),
+        k.outline(4, k.color(176, 25, 74)),
+        k.pos(k.center()),
+        k.anchor("center"),
+        k.area(),
+        k.z(20),
+        "popup"
+    ]);
+
+    // message
+    msgOverlay.add([
+        k.text(message, { font: 'cheri', size: 24, width: 900, align: "left", lineSpacing: 8 }),
+        k.color(42, 125, 82),
+        k.anchor("center"),
+        k.z(25),
+        k.pos(0, 0),
+        k.area(),
+        "popup"
+    ]);
+
+    // flower decor
+    const bigFlower = k.add([
+        k.sprite("flowy"),
+        k.pos(1250, 60),
+        k.anchor("center"),
+        k.scale(2),
+        k.z(25),
+        k.rotate(-20),
+        k.area(),
+        "popup"
+    ]);
+
+    const smallFlower = k.add([
+        k.sprite("flowy"),
+        k.pos(270, 400),
+        k.anchor("center"),
+        k.scale(0.8),
+        k.rotate(20),
+        k.z(25),
+        k.area(),
+        "popup"
+    ]);
+
+    const mediumFlower = k.add([
+        k.sprite("flowy"),
+        k.pos(1245, 645),
+        k.anchor("center"),
+        k.scale(1.5),
+        k.rotate(20),
+        k.z(25),
+        k.area(),
+        "popup"
+    ]);
+
+    k.onKeyPress(["enter"], () => {
+        k.destroy(msgOverlay);
+        k.destroy(bigFlower);
+        k.destroy(smallFlower);
+        k.destroy(mediumFlower);
+    }); 
+    k.onClick("popup", () => {
+        k.destroy(msgOverlay);
+        k.destroy(bigFlower);
+        k.destroy(smallFlower);
+        k.destroy(mediumFlower);
     });
 }
 
